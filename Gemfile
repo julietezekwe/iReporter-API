@@ -18,15 +18,19 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Hirb to view rals console, in tabular form
 gem 'hirb', '~> 0.7.3'
 # Use ActiveStorage variant
-# gem 'mini_magick', '~> 4.8'
+gem 'mini_magick', '~> 4.8'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
-# Adds Application.yml file for sensitive information
-gem "figaro"
+# Adds Application.yml file for storing environment variables
+gem 'figaro'
+# Use CarrierWave to integrate Image uploads to Models
+gem 'carrierwave'
+# Use Cloudinary as a plugin to store uploads in the Cloud
+gem 'cloudinary'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
