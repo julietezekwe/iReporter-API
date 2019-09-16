@@ -19,6 +19,8 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'hirb', '~> 0.7.3'
 # Use ActiveStorage variant
 gem 'mini_magick', '~> 4.8'
+# Use JWT for Authentication and Authorization of API requests
+gem 'jwt', '~> 2.2', '>= 2.2.1'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
