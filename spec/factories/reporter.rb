@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :reporter do
-    name { Faker::Name.firts_name }
+    name { Faker::Name.first_name }
     email { Faker::Internet.email }
     password { Faker::Lorem.word }
     phone { Faker::PhoneNumber.phone_number }
