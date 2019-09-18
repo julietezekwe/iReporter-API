@@ -33,7 +33,8 @@ gem 'figaro'
 gem 'carrierwave'
 # Use Cloudinary as a plugin to store uploads in the Cloud
 gem 'cloudinary'
-
+# Use Pry for debugging
+gem 'pry', '~> 0.12.2'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 

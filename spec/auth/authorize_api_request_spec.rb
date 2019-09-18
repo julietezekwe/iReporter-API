@@ -1,9 +1,6 @@
 require 'rails_helper'
-require_relative '../support/controller_spec_helper.rb'
 
 RSpec.describe AuthorizeApiRequest do
-  include ControllerSpecHelper
-
   let(:reporter) { create :reporter }
   let(:header) { { 'Authorization' => token_generator(reporter.id) } }
   subject(:invalid_request_obj) { described_class.new({}) }
