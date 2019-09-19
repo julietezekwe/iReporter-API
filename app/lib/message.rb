@@ -4,11 +4,11 @@ class Message
   end
 
   def self.invalid_credentials
-    "Invalid credentials."
+    'Invalid credentials'
   end
 
   def self.invalid_token
-    "Invalid token."
+    "Invalid token"
   end
 
   def self.missing_token
@@ -23,8 +23,8 @@ class Message
     'Account created successfully'
   end
 
-  def self.account_not_created
-    'Account could not be created'
+  def self.account_exists
+    'Account already exists'
   end
 
   def self.expired_token
