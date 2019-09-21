@@ -8,7 +8,7 @@ class Message
   end
 
   def self.invalid_token
-    "Invalid token"
+    'Invalid token'
   end
 
   def self.missing_token
@@ -30,4 +30,8 @@ class Message
   def self.expired_token
     'Sorry, your token has expired. Please login to continue.'
   end
+
+  def self.login_success
+    'Login was successful'
+  end 
 end
