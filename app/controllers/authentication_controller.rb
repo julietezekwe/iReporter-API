@@ -1,13 +1,15 @@
 class AuthenticationController < ApplicationController
+  skip_before_action :authorize_request, only: :authenticate
+
   def authenticate
     auth_token = AuthenticateUser.new(nil, auth_params[:email], auth_params[:password]).call
     response = {
       message: Message.login_success,
       auth_token: auth_token
     }
-    render json: response, status: :created
+    json_response(response, :created)
   rescue ExceptionHandler::AuthenticationError => e
-    render json: { error: e.message }, status: 400
+    json_response({ error: e.message }, 400) 
   end
 
   private

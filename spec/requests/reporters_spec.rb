@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Reporters Controller', type: :request do
+RSpec.describe 'Reporters', type: :request do
   let(:reporter) { build :reporter }
   let(:headers) { { "Content-Type" => "application/json" } }
   let(:valid_attributes) { attributes_for(:reporter) }

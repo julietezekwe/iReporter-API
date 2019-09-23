@@ -34,4 +34,8 @@ class Message
   def self.login_success
     'Login was successful'
   end 
+
+  def self.report_success
+    'Incident was reported successfully'
+  end
 end
