@@ -38,4 +38,12 @@ class Message
   def self.report_success
     'Incident was reported successfully'
   end
+
+  def self.update_success
+    'Incident was updated successfully'
+  end
+
+  def self.update_failure
+    'Only Incidents marked as draft, can be updated'
+  end
 end
