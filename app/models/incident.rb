@@ -3,7 +3,7 @@ class Incident < ApplicationRecord
   validates :evidence, presence: true
   validates :narration, presence: true, length: { maximum: 400 }
   validates :location, presence: true
-  validates :status, presence: true, length: { maximum: 100 }
+  validates :status, inclusion: { in: %w(draft investigating resolved rejected) }
   validates :reporter_id, presence: true
   validates :incident_type_id, presence: true
 
