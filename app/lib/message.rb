@@ -43,7 +43,15 @@ class Message
     'Incident was updated successfully'
   end
 
+  def self.delete_success
+    'Incident was deleted successfully'
+  end
+
   def self.update_failure
     'Only Incidents marked as draft, can be updated'
+  end
+
+  def self.delete_failure
+    'Only Incidents marked as draft, can be deleted'
   end
 end

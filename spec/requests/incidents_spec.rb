@@ -107,13 +107,62 @@ RSpec.describe 'Incidents', type: :request do
       end
     end
 
-    context 'when invalid request' do
+    context 'when invalid request for another user' do
       let(:reporterx) { create(:reporterx) }
       let(:incident) { 
         create(:incident, reporter_id: reporterx.id, incident_type_id: incident_type.id)
       }
 
       before { put "/incidents/#{incident.id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:error]).to match(/Unauthorized request/)
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    context 'when valid request' do
+      let(:incident) { create(:incident, reporter_id: reporter.id, incident_type_id: incident_type.id) }
+
+      before { delete "/incidents/#{incident.id}", headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Incident was deleted successfully/)
+      end
+    end
+
+    context 'when invalid request' do
+      let(:incident) { 
+        create(:incident, status: "resolved", reporter_id: reporter.id, incident_type_id: incident_type.id)
+      }
+
+      before { delete "/incidents/#{incident.id}", headers: headers }
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:error]).to match(/Only Incidents marked as draft, can be deleted/)
+      end
+    end
+
+    context 'when invalid request for another user' do
+      let(:reporterx) { create(:reporterx) }
+      let(:incident) { 
+        create(:incident, reporter_id: reporterx.id, incident_type_id: incident_type.id)
+      }
+
+      before { put "/incidents/#{incident.id}", headers: headers }
 
       it 'returns a unprocessable status' do
         expect(response).to have_http_status(401)
