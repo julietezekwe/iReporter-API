@@ -15,9 +15,10 @@ class IncidentsController < ApplicationController
   end
 
   def update
-    return json_response({ error: Message.unauthorized }, 401) unless my_incident?(@incident)
-    return json_response({ error: Message.update_failure }, 422) unless draft_incident?(@incident)
+    return json_response({ error: Message.unauthorized }, 401) unless my_incident?(@incident) || is_admin?
+    return json_response({ error: Message.update_failure }, 422) unless draft_incident?(@incident) || is_admin?
 
+    update_params = if is_admin? then update_status_params else update_all_params end
     @incident.update(update_params)
     response = {
       message: Message.update_success,
@@ -40,8 +41,12 @@ class IncidentsController < ApplicationController
     params.permit(:title, :evidence, :narration, :location, :status, :incident_type_id)
   end
 
-  def update_params
+  def update_all_params
     params.permit(:title, :evidence, :narration, :location, :incident_type_id)
+  end
+
+  def update_status_params
+    params.permit(:status)
   end
 
   def set_incident
@@ -54,5 +59,9 @@ class IncidentsController < ApplicationController
 
   def draft_incident?(incident)
     incident[:status] == "draft"
+  end
+
+  def is_admin?
+    current_user.is_admin
   end
 end
