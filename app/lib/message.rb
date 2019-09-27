@@ -54,4 +54,12 @@ class Message
   def self.delete_failure
     'Only Incidents marked as draft, can be deleted'
   end
+
+  def self.follow_success
+    'Incident followed successfully'
+  end
+
+  def self.unfollow_success
+    'Incident unfollowed successfully'
+  end
 end

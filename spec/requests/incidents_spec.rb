@@ -73,7 +73,7 @@ RSpec.describe 'Incidents', type: :request do
   end
 
   describe 'PUT #update' do
-    context 'when valid request' do
+    context 'when valid request for user' do
       let(:incident) { create(:incident, reporter_id: reporter.id, incident_type_id: incident_type.id) }
 
       before { put "/incidents/#{incident.id}", params: valid_attributes.to_json, headers: headers }
@@ -88,6 +88,31 @@ RSpec.describe 'Incidents', type: :request do
 
       it 'returns the updated incident' do
         expect(json_response[:data]).not_to be_nil
+      end
+    end
+
+    context 'when valid request for admin' do
+      let(:incident) { create(:incident, reporter_id: reporter.id, incident_type_id: incident_type.id) }
+      let(:admin) { create(:admin) }
+      let(:headers) do
+        {
+          "Authorization" => token_generator(admin.id),
+          "Content-Type" => "application/json"
+        }
+      end
+
+      before { put "/incidents/#{incident.id}", params: { status: "investigating" }.to_json, headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Incident was updated successfully/)
+      end
+
+      it 'returns the updated incident' do
+        expect(json_response[:data][:status]).to match(/investigating/)
       end
     end
 
