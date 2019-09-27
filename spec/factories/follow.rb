@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :follow do
-    follower_id
-    following_id
+    follower_id { 1 }
+    following_id { 1 }
   end
 end
