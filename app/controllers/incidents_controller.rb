@@ -24,6 +24,12 @@ class IncidentsController < ApplicationController
       message: Message.update_success,
       data: @incident
     }
+
+    if is_admin?
+      incident_link = "#{request.protocol}#{request.host_with_port}/incidents/#{@incident.id}"
+      IncidentMailer.status_notification(@incident,incident_link).deliver_now
+    end
+
     json_response(response, :ok)
   end
 
