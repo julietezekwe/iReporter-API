@@ -187,7 +187,7 @@ RSpec.describe 'Incidents', type: :request do
         create(:incident, reporter_id: reporterx.id, incident_type_id: incident_type.id)
       }
 
-      before { put "/incidents/#{incident.id}", headers: headers }
+      before { delete "/incidents/#{incident.id}", headers: headers }
 
       it 'returns a unprocessable status' do
         expect(response).to have_http_status(401)
@@ -198,4 +198,39 @@ RSpec.describe 'Incidents', type: :request do
       end
     end
   end
+
+  describe 'GET #index' do
+    context 'when there are no incident' do
+      before { get '/incidents', headers: headers }
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Sorry, there are currently no incident reports./)
+      end
+
+      it 'returns an empty array' do
+        expect(json_response[:data]).to be_nil
+      end
+    end
+
+    context 'when valid request' do
+      let!(:incident) { create(:incident, reporter_id: reporter.id, incident_type_id: incident_type.id) }
+      let!(:incidentx) { create(:incidentx, reporter_id: reporter.id, incident_type_id: incident_type.id) }
+      let!(:follow) { create(:follow, follower_id: reporter.id, following_id: incident.id) }
+
+      before { get '/incidents', headers: headers }
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns all incidents' do
+        expect(json_response[:data].length).to eq(2)
+      end
+    end
+  end
+
 end

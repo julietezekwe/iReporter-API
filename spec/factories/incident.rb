@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :incident do
+  factory :incident, aliases: [:incidentx] do
     title { Faker::Lorem.word }
     evidence { Faker::Internet.url }
     narration { Faker::Lorem.word }

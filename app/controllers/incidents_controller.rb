@@ -1,5 +1,17 @@
 class IncidentsController < ApplicationController
-  before_action :set_incident, except: :create
+  before_action :set_incident, except: [:create, :index]
+
+  def index
+    @incidents_following = Incident.all.map do |incident|
+      {
+        incident: incident,
+        follow_count: incident.follows.length
+      }
+    end
+    @incidents = @incidents_following.sort_by { |hash| hash[:follow_count]}.reverse!
+    return json_response({ data: @incidents }, :ok) unless @incidents.empty?
+    json_response({ message: Message.records_not_found }, 200)
+  end
 
   def create
     @incident = current_user.reported_incidents.create!(create_params)
