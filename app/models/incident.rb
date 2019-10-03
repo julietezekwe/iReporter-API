@@ -1,4 +1,9 @@
+require 'elasticsearch/model'
+
 class Incident < ApplicationRecord
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
+
   validates :title, presence: true, length: { maximum: 100 }
   validates :evidence, presence: true
   validates :narration, presence: true, length: { maximum: 400 }
@@ -14,4 +19,16 @@ class Incident < ApplicationRecord
 
   # uploader was disabled for testing in Postman
   # mount_uploader :evidence, EvidenceUploader
+
+  def as_indexed_json(options = {})
+    self.as_json(
+      only: [:title, :location, :narration, :status],
+      include: {
+        reporter: { only: :name },
+        incident_type: { only: :title }
+      }
+    )
+  end
+
+  index_name "incidents-#{Rails.env}"
 end

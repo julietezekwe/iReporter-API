@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Incidents', type: :request do
+RSpec.describe 'Incidents', elasticsearch: true, type: :request do
   let(:reporter) { create(:reporter) }
   let(:incident_type) { create(:incident_type) }
   let(:headers) do
@@ -55,7 +55,7 @@ RSpec.describe 'Incidents', type: :request do
       end
 
       it 'returns an incident' do
-        expect(json_response[:data]).not_to be_nil
+        expect(json_response[:data][:id]).to eq(incident.id)
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe 'Incidents', type: :request do
       end
 
       it 'returns the updated incident' do
-        expect(json_response[:data]).not_to be_nil
+        expect(json_response[:data][:id]).to eq(incident.id)
       end
     end
 
@@ -233,4 +233,35 @@ RSpec.describe 'Incidents', type: :request do
     end
   end
 
+  describe 'GET #search' do
+    context 'when no incident is matches the query' do
+      before { get "/search?query=drunk", headers: headers }
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns an not found message' do
+        expect(json_response[:message]).to match(/No Incident matches drunk/)
+      end
+    end
+
+    context 'when at least an incident matches the query' do
+      let!(:incident) { create(:incident, reporter_id: reporter.id, incident_type_id: incident_type.id) }
+
+      before do 
+        Incident.__elasticsearch__.refresh_index! 
+        get "/search?query=draft", headers: headers 
+      end
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns an incident' do
+        expect(json_response[:results].length).to eq(1)
+        expect(json_response[:total]).to eq(1)
+      end
+    end
+  end
 end

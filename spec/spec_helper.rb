@@ -13,7 +13,48 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'elasticsearch/extensions/test/cluster'
+
 RSpec.configure do |config|
+  # Start an in-memory cluster for Elasticsearch as needed
+  config.before :all, elasticsearch: true do
+    Elasticsearch::Extensions::Test::Cluster.start(port: 9250, nodes: 1, timeout: 120) unless Elasticsearch::Extensions::Test::Cluster.running?(on: 9250)
+  end
+
+  # Stop elasticsearch cluster after test run
+  config.after :suite do
+    Elasticsearch::Extensions::Test::Cluster.stop(port: 9250, nodes: 1) if Elasticsearch::Extensions::Test::Cluster.running?(on: 9250)
+  end
+
+  # Create indexes for all elastic searchable models
+  config.before :each, elasticsearch: true do
+    if Incident.respond_to?(:__elasticsearch__)
+      begin
+        Incident.__elasticsearch__.create_index!
+        Incident.__elasticsearch__.refresh_index!
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        # This kills "Index does not exist" errors being written to console
+        # by this: https://github.com/elastic/elasticsearch-rails/blob/738c63efacc167b6e8faae3b01a1a0135cfc8bbb/elasticsearch-model/lib/elasticsearch/model/indexing.rb#L268
+      rescue => e
+        STDERR.puts "There was an error creating the elasticsearch index for Incident: #{e.inspect}"
+      end
+    end
+  end
+
+  # Delete indexes for all elastic searchable models to ensure clean state between tests
+  config.after :each, elasticsearch: true do
+    if Incident.respond_to?(:__elasticsearch__)
+      begin
+        Incident.__elasticsearch__.delete_index!
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        # This kills "Index does not exist" errors being written to console
+        # by this: https://github.com/elastic/elasticsearch-rails/blob/738c63efacc167b6e8faae3b01a1a0135cfc8bbb/elasticsearch-model/lib/elasticsearch/model/indexing.rb#L268
+      rescue => e
+        STDERR.puts "There was an error removing the elasticsearch index for Incident: #{e.inspect}"
+      end
+    end
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
