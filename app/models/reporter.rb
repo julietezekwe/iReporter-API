@@ -1,4 +1,5 @@
 class Reporter < ApplicationRecord
+  after_save :index_incidents_in_elasticsearch
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   has_secure_password
 
@@ -12,4 +13,10 @@ class Reporter < ApplicationRecord
   has_many :followed_incidents, through: :follows, source: :follower
 
   mount_uploader :avatar, AvatarUploader
+
+  private
+
+  def index_incidents_in_elasticsearch
+    reported_incidents.find_each { |incident| incident.__elasticsearch__.index_document }
+  end
 end

@@ -1,5 +1,5 @@
 class IncidentsController < ApplicationController
-  before_action :set_incident, except: [:create, :index]
+  before_action :set_incident, except: [:create, :index, :search]
 
   def index
     @incidents_following = Incident.all.map do |incident|
@@ -15,11 +15,11 @@ class IncidentsController < ApplicationController
 
   def create
     @incident = current_user.reported_incidents.create!(create_params)
-    response = {
+
+    json_response({
       message: Message.report_success,
       data: @incident
-    }
-    json_response(response, :created)
+    }, :created)
   end
 
   def show
@@ -32,17 +32,16 @@ class IncidentsController < ApplicationController
 
     update_params = if is_admin? then update_status_params else update_all_params end
     @incident.update(update_params)
-    response = {
-      message: Message.update_success,
-      data: @incident
-    }
 
     if is_admin?
       incident_link = "#{request.protocol}#{request.host_with_port}/incidents/#{@incident.id}"
       IncidentMailer.status_notification(@incident,incident_link).deliver_now
     end
 
-    json_response(response, :ok)
+    json_response({
+      message: Message.update_success,
+      data: @incident
+    }, :ok)
   end
 
   def destroy
@@ -51,6 +50,19 @@ class IncidentsController < ApplicationController
 
     @incident.destroy
     json_response({ message: Message.delete_success }, :ok)
+  end
+
+  def search
+    response = Incident.__elasticsearch__.search(params[:query]).results
+
+    if response.total > 0 then
+      return json_response({
+        results: response.results,
+        total: response.total
+      }, :ok)
+    end
+
+    json_response({ message: "No Incident matches #{params[:query]}" }, :ok)
   end
   
   private
@@ -77,9 +89,5 @@ class IncidentsController < ApplicationController
 
   def draft_incident?(incident)
     incident[:status] == "draft"
-  end
-
-  def is_admin?
-    current_user.is_admin
   end
 end

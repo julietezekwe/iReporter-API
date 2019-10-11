@@ -3,8 +3,9 @@ Rails.application.routes.draw do
   post 'signup', to: 'reporters#create'
   post 'login', to: 'authentication#authenticate'
 
+  get 'search', to: 'incidents#search'
   resources :incidents do
     resources :follows, only: [:create, :index]
-    resources :comments
+    resources :comments, except: [:show, :update]
   end
 end

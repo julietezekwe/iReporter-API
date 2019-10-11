@@ -37,6 +37,8 @@ gem 'cloudinary'
 gem 'pry', '~> 0.12.2'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
+# Use Elastic Search API as search engine
+gem 'elasticsearch-model'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -56,6 +58,7 @@ group :test do
   gem 'shoulda-matchers'
   gem 'faker', '~> 1.6', '>= 1.6.6'
   gem 'database_cleaner'
+  gem 'elasticsearch-extensions'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
