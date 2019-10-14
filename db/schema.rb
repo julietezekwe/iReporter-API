@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_26_205639) do
+ActiveRecord::Schema.define(version: 2019_10_14_141343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "comments", force: :cascade do |t|
+    t.text "body"
+    t.bigint "incident_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "reporter_id"
+    t.index ["incident_id"], name: "index_comments_on_incident_id"
+    t.index ["reporter_id"], name: "index_comments_on_reporter_id"
+  end
 
   create_table "follows", force: :cascade do |t|
     t.integer "follower_id"
@@ -51,6 +61,8 @@ ActiveRecord::Schema.define(version: 2019_09_26_205639) do
     t.boolean "is_admin", default: false
   end
 
+  add_foreign_key "comments", "incidents"
+  add_foreign_key "comments", "reporters"
   add_foreign_key "follows", "incidents", column: "following_id", on_delete: :cascade
   add_foreign_key "follows", "reporters", column: "follower_id", on_delete: :cascade
   add_foreign_key "incidents", "incident_types"

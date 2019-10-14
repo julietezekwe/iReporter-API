@@ -11,6 +11,7 @@ class Reporter < ApplicationRecord
   has_many :reported_incidents, class_name: "Incident", foreign_key: "reporter_id" 
   has_many :follows, class_name: "Follow", foreign_key: "follower_id"
   has_many :followed_incidents, through: :follows, source: :follower
+  has_many :comments
 
   mount_uploader :avatar, AvatarUploader
 
