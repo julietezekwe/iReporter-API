@@ -14,7 +14,7 @@ class Incident < ApplicationRecord
 
   belongs_to :incident_type
   belongs_to :reporter
-  has_many :follows, class_name: "Follow", foreign_key: "following_id"
+  has_many :follows, class_name: "Follow", foreign_key: "following_id", dependent: :destroy
   has_many :following_reporters, through: :follows, source: :following
   has_many :comments, dependent: :destroy
 

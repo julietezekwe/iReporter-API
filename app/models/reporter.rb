@@ -8,10 +8,11 @@ class Reporter < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX }, length: { maximum: 75 }
   validates :password_digest, presence: true
 
-  has_many :reported_incidents, class_name: "Incident", foreign_key: "reporter_id" 
-  has_many :follows, class_name: "Follow", foreign_key: "follower_id"
+  has_many :reported_incidents, class_name: "Incident", foreign_key: "reporter_id", dependent: :destroy 
+  has_many :follows, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
   has_many :followed_incidents, through: :follows, source: :follower
-  has_many :comments
+  has_many :comments, dependent: :destroy
+  has_many :comment_replies, dependent: :destroy
 
   mount_uploader :avatar, AvatarUploader
 

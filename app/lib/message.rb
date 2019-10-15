@@ -39,15 +39,15 @@ class Message
     'Login was successful'
   end 
 
-  def self.report_success
-    'Incident was reported successfully'
+  def self.report_success(record = 'record')
+    "#{record} was reported successfully"
   end
 
   def self.update_success
     'Incident was updated successfully'
   end
 
-  def self.delete_success(record)
+  def self.delete_success(record = 'record')
     "#{record} was deleted successfully"
   end
 
@@ -65,9 +65,5 @@ class Message
 
   def self.unfollow_success
     'Incident unfollowed successfully'
-  end
-
-  def self.comment_success
-    'Comment was added successfully'
   end
 end

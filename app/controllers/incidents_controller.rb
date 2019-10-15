@@ -17,7 +17,7 @@ class IncidentsController < ApplicationController
     @incident = current_user.reported_incidents.create!(create_params)
 
     json_response({
-      message: Message.report_success,
+      message: Message.report_success('Incident'),
       data: @incident
     }, :created)
   end

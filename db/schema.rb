@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_14_141343) do
+ActiveRecord::Schema.define(version: 2019_10_15_194144) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "comment_replies", force: :cascade do |t|
+    t.text "body"
+    t.bigint "reporter_id"
+    t.bigint "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id"], name: "index_comment_replies_on_comment_id"
+    t.index ["reporter_id"], name: "index_comment_replies_on_reporter_id"
+  end
 
   create_table "comments", force: :cascade do |t|
     t.text "body"
@@ -61,6 +71,8 @@ ActiveRecord::Schema.define(version: 2019_10_14_141343) do
     t.boolean "is_admin", default: false
   end
 
+  add_foreign_key "comment_replies", "comments"
+  add_foreign_key "comment_replies", "reporters"
   add_foreign_key "comments", "incidents"
   add_foreign_key "comments", "reporters"
   add_foreign_key "follows", "incidents", column: "following_id", on_delete: :cascade
