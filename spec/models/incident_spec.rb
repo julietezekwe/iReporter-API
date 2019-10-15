@@ -6,6 +6,7 @@ RSpec.describe Incident, type: :model do
     it { should belong_to(:reporter) }
     it { should have_many(:follows) }
     it { should have_many(:following_reporters)}
+    it { should have_many(:comments) }
   end
 
   describe "Validations" do

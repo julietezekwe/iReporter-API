@@ -5,6 +5,7 @@ RSpec.describe Reporter, type: :model do
     it { should have_many(:reported_incidents) }
     it { should have_many(:follows) }
     it { should have_many(:followed_incidents) }
+    it { should have_many(:comments) }
   end
 
   describe "Validations" do
