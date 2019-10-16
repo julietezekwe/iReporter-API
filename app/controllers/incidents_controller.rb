@@ -27,8 +27,8 @@ class IncidentsController < ApplicationController
   end
 
   def update
-    return json_response({ error: Message.unauthorized }, 401) unless my_incident?(@incident) || is_admin?
-    return json_response({ error: Message.update_failure }, 422) unless draft_incident?(@incident) || is_admin?
+    return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@incident) || is_admin?
+    return json_response({ error: Message.update_failure }, 422) unless is_draft?(@incident) || is_admin?
 
     update_params = if is_admin? then update_status_params else update_all_params end
     @incident.update(update_params)
@@ -45,11 +45,11 @@ class IncidentsController < ApplicationController
   end
 
   def destroy
-    return json_response({ error: Message.unauthorized }, 401) unless my_incident?(@incident)
-    return json_response({ error: Message.delete_failure }, 422) unless draft_incident?(@incident)
+    return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@incident) || is_admin?
+    return json_response({ error: Message.delete_failure }, 422) unless is_draft?(@incident) || is_admin?
 
     @incident.destroy
-    json_response({ message: Message.delete_success("Incident") }, :ok)
+    json_response({ message: Message.delete_success('Incident') }, :ok)
   end
 
   def search
@@ -83,11 +83,7 @@ class IncidentsController < ApplicationController
     @incident = Incident.find(params[:id])
   end
 
-  def my_incident?(incident)
-    incident[:reporter_id] == current_user.id
-  end
-
-  def draft_incident?(incident)
+  def is_draft?(incident)
     incident[:status] == "draft"
   end
 end
