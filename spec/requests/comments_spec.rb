@@ -37,4 +37,56 @@ RSpec.describe 'Comments',  type: :request do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    context 'when valid request' do
+      let(:comment) { create(:comment, reporter_id: reporter.id, incident_id: incident.id) }
+
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}", headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Comment was deleted successfully/)
+      end
+    end
+
+    context 'when invalid request for another user' do
+      let(:reporterx) { create(:reporterx) }
+      let(:comment) { create(:comment, reporter_id: reporterx.id, incident_id: incident.id) }
+
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}", headers: headers }
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns an error message' do
+        expect(json_response[:error]).to match(/Unauthorized request/)
+      end
+    end
+
+    context 'when valid request for admin' do
+      let(:admin) { create(:admin) }
+      let(:comment) { create(:comment, reporter_id: reporter.id, incident_id: incident.id) }
+      let(:headers) do
+        {
+          "Authorization" => token_generator(admin.id),
+          "Content-Type" => "application/json"
+        }
+      end
+
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}", headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Comment was deleted successfully/)
+      end
+    end
+  end
 end

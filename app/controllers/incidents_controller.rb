@@ -49,7 +49,7 @@ class IncidentsController < ApplicationController
     return json_response({ error: Message.delete_failure }, 422) unless draft_incident?(@incident)
 
     @incident.destroy
-    json_response({ message: Message.delete_success }, :ok)
+    json_response({ message: Message.delete_success("Incident") }, :ok)
   end
 
   def search
