@@ -21,7 +21,7 @@ RSpec.describe 'Comments',  type: :request do
       end
 
       it 'returns a success message' do
-        expect(json_response[:message]).to match(/Comment was added successfully/)
+        expect(json_response[:message]).to match(/Comment was reported successfully/)
       end
     end
 

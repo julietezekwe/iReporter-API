@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'search', to: 'incidents#search'
   resources :incidents do
     resources :follows, only: [:create, :index]
-    resources :comments, except: [:show, :update]
+    resources :comments, except: [:show, :update] do
+      resources :comment_replies, except: [:show, :update]
+    end
   end
 end
