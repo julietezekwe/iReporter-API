@@ -89,4 +89,39 @@ RSpec.describe 'Comments',  type: :request do
       end
     end
   end
+
+  describe 'PUT #update' do
+    context 'when valid request for user' do
+      let(:comment) { create(:comment, reporter_id: reporter.id, incident_id: incident.id) }
+
+      before { put "/incidents/#{incident.id}/comments/#{comment.id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Comment was updated successfully/)
+      end
+
+      it 'returns the updated incident' do
+        expect(json_response[:data][:id]).to eq(comment.id)
+      end
+    end
+
+    context 'when invalid request for another user' do
+      let(:reporterx) { create(:reporterx) }
+      let(:comment) { create(:comment, reporter_id: reporterx.id, incident_id: incident.id) }
+
+      before {put "/incidents/#{incident.id}/comments/#{comment.id}", params: valid_attributes.to_json, headers: headers}
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns an error message' do
+        expect(json_response[:error]).to match(/Unauthorized request/)
+      end
+    end
+  end
 end
