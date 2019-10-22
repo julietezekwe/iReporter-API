@@ -43,8 +43,8 @@ class Message
     "#{record} was reported successfully"
   end
 
-  def self.update_success
-    'Incident was updated successfully'
+  def self.update_success(record = 'record')
+    "#{record} was updated successfully"
   end
 
   def self.delete_success(record = 'record')

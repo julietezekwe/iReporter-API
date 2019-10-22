@@ -39,7 +39,7 @@ class IncidentsController < ApplicationController
     end
 
     json_response({
-      message: Message.update_success,
+      message: Message.update_success('Incident'),
       data: @incident
     }, :ok)
   end
