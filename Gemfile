@@ -39,6 +39,8 @@ gem 'pry', '~> 0.12.2'
 # gem 'rack-cors'
 # Use Elastic Search API as search engine
 gem 'elasticsearch-model'
+# Serializer
+gem 'active_model_serializers', '~> 0.10.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -17,6 +17,7 @@ class Incident < ApplicationRecord
   has_many :follows, class_name: "Follow", foreign_key: "following_id", dependent: :destroy
   has_many :following_reporters, through: :follows, source: :following
   has_many :comments, dependent: :destroy
+  has_many :comment_replies, through: :comments
 
   # uploader was disabled for testing in Postman
   # mount_uploader :evidence, EvidenceUploader

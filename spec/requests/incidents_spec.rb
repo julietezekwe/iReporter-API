@@ -55,7 +55,8 @@ RSpec.describe 'Incidents', elasticsearch: true, type: :request do
       end
 
       it 'returns an incident' do
-        expect(json_response[:data][:id]).to eq(incident.id)
+        expect(json_response[:incident][:id]).to eq(incident.id)
+        expect(json_response[:incident][:reporter][:id]).to eq(reporter.id)
       end
     end
 
@@ -228,7 +229,7 @@ RSpec.describe 'Incidents', elasticsearch: true, type: :request do
       end
 
       it 'returns all incidents' do
-        expect(json_response[:data].length).to eq(2)
+        expect(json_response[:incidents].length).to eq(2)
       end
     end
   end

@@ -124,4 +124,32 @@ RSpec.describe 'Comments',  type: :request do
       end
     end
   end
+
+  describe 'GET #index' do
+    context 'when there are no comments' do
+      before { get "/incidents/#{incident.id}/comments", headers: headers }
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns an empty array' do
+        expect(json_response[:data]).to be_nil
+      end
+    end
+
+    context 'when valid request' do
+      let!(:comment) { create(:comment, reporter_id: reporter.id, incident_id: incident.id) }
+
+      before { get "/incidents/#{incident.id}/comments", headers: headers }
+
+      it 'returns an ok status' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns all comments' do
+        expect(json_response[:comments].length).to eq(1)
+      end
+    end
+  end
 end
