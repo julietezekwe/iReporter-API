@@ -15,6 +15,16 @@ class CommentRepliesController < ApplicationController
     }, :created)
   end
 
+  def update
+    return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@comment_reply)
+    @comment_reply.update!(body: params[:body])
+    
+    json_response({
+      message: Message.update_success('Reply'),
+      data: @comment_reply
+    }, :ok)
+  end
+
   def destroy
     return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@comment_reply) || is_admin?
 

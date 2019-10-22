@@ -43,6 +43,41 @@ RSpec.describe 'CommentReplies',  type: :request do
     end
   end
 
+  describe 'PUT #update' do
+    let(:comment_reply) { create(:comment_reply, comment_id: comment.id, reporter_id: reporter.id) }
+
+    context 'when valid request for user' do
+      before { put "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Reply was updated successfully/)
+      end
+
+      it 'returns the updated incident' do
+        expect(json_response[:data][:id]).to eq(comment_reply.id)
+      end
+    end
+
+    context 'when invalid request for another user' do
+      let(:reporterx) { create(:reporterx) }
+      let(:comment_reply) { create(:comment_reply, comment_id: comment.id, reporter_id: reporterx.id) }
+
+      before { put "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id}", params: valid_attributes.to_json, headers: headers}
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns an error message' do
+        expect(json_response[:error]).to match(/Unauthorized request/)
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     let(:comment_reply) { create(:comment_reply, comment_id: comment.id, reporter_id: reporter.id) }
 
