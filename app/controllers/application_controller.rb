@@ -9,6 +9,10 @@ class ApplicationController < ActionController::API
     current_user.is_admin
   end
 
+  def is_mine?(obj)
+    obj[:reporter_id] == current_user.id
+  end
+
   private
 
   def authorize_request

@@ -28,7 +28,7 @@ class CommentsController < ApplicationController
     return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@comment) || is_admin?
 
     @comment.destroy
-    json_response({ message: Message.delete_success("Comment")}, :ok)
+    json_response({ message: Message.delete_success('Comment')}, :ok)
   end
 
   private
@@ -36,9 +36,5 @@ class CommentsController < ApplicationController
   def set_comment
     @incident = Incident.find(params[:incident_id])
     @comment = @incident.comments.find(params[:id])
-  end
-
-  def is_mine?(comment)
-    comment[:reporter_id] == current_user.id
   end
 end

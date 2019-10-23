@@ -42,4 +42,67 @@ RSpec.describe 'CommentReplies',  type: :request do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    let(:comment_reply) { create(:comment_reply, comment_id: comment.id, reporter_id: reporter.id) }
+
+    context 'when valid request' do
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id}", headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Reply was deleted successfully/)
+      end
+    end
+
+    context 'when invalid request for another reply' do
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id * 11}", headers: headers }
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns an error message' do
+        expect(json_response[:error]).to match(/Couldn't find CommentReply/)
+      end
+    end
+
+    context 'when valid request for admin' do
+      let(:admin) { create(:admin) }
+      let(:headers) do
+        {
+          "Authorization" => token_generator(admin.id),
+          "Content-Type" => "application/json"
+        }
+      end
+
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id}", headers: headers }
+
+      it 'returns an ok response' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns a success message' do
+        expect(json_response[:message]).to match(/Reply was deleted successfully/)
+      end
+    end
+
+    context 'when invalid request for another user' do
+      let(:reporterx) { create(:reporterx) }
+      let(:comment_reply) { create(:comment_reply, comment_id: comment.id, reporter_id: reporterx.id) }
+
+      before { delete "/incidents/#{incident.id}/comments/#{comment.id}/comment_replies/#{comment_reply.id}", headers: headers }
+
+      it 'returns a unprocessable status' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns an error message' do
+        expect(json_response[:error]).to match(/Unauthorized request/)
+      end
+    end
+  end
 end
