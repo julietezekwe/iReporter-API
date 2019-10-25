@@ -1,1 +1,3 @@
-Elasticsearch::Model.client = Elasticsearch::Client.new host: ENV['ELASTICSEARCH_URL'] || "localhost:9200"
+host = if Rails.env.test? then "localhost:9200" else ENV['ELASTICSEARCH_URL'] end
+
+Elasticsearch::Model.client = Elasticsearch::Client.new host: host 
