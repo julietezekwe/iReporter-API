@@ -3,7 +3,7 @@ class FollowsController < ApplicationController
     @follow = current_user.follows.find_by(following_id: params[:incident_id])
     if @follow
       @follow.destroy
-      return json_response({ message: Message.unfollow_success }, :ok)
+      return json_response({ message: Message.unfollow_success })
     end
 
     @follow = current_user.follows.create!(following_id: params[:incident_id])

@@ -2,15 +2,9 @@ class IncidentsController < ApplicationController
   before_action :set_incident, except: [:create, :index, :search]
 
   def index
-    @incidents_following = Incident.all.map do |incident|
-      {
-        incident: incident,
-        follow_count: incident.follows.length
-      }
-    end
-    @incidents = @incidents_following.sort_by { |hash| hash[:follow_count]}.reverse!
-    return json_response({ data: @incidents }, :ok) unless @incidents.empty?
-    json_response({ message: Message.records_not_found }, 200)
+    @incidents = Incident.all
+    return render json: @incidents, adapter: :json unless @incidents.empty?
+    json_response({ message: Message.records_not_found })
   end
 
   def create
@@ -23,7 +17,7 @@ class IncidentsController < ApplicationController
   end
 
   def show
-    json_response({ data: @incident }, :ok)
+    render json: @incident, adapter: :json
   end
 
   def update
@@ -41,7 +35,7 @@ class IncidentsController < ApplicationController
     json_response({
       message: Message.update_success('Incident'),
       data: @incident
-    }, :ok)
+    })
   end
 
   def destroy
@@ -49,7 +43,7 @@ class IncidentsController < ApplicationController
     return json_response({ error: Message.delete_failure }, 422) unless is_draft?(@incident) || is_admin?
 
     @incident.destroy
-    json_response({ message: Message.delete_success('Incident') }, :ok)
+    json_response({ message: Message.delete_success("Incident") })
   end
 
   def search
@@ -59,10 +53,10 @@ class IncidentsController < ApplicationController
       return json_response({
         results: response.results,
         total: response.total
-      }, :ok)
+      })
     end
 
-    json_response({ message: "No Incident matches #{params[:query]}" }, :ok)
+    json_response({ message: "No Incident matches #{params[:query]}" })
   end
   
   private

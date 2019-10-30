@@ -1,5 +1,10 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, except: [:create]
+  before_action :set_comment, except: [:create, :index]
+
+  def index
+    @comments = Incident.find(params[:incident_id]).comments
+    render json: @comments, adapter: :json
+  end
 
   def create
     @comment = Comment.create!(
@@ -21,14 +26,14 @@ class CommentsController < ApplicationController
     json_response({
       message: Message.update_success('Comment'),
       data: @comment
-    }, :ok)
+    })
   end
 
   def destroy
     return json_response({ error: Message.unauthorized }, 401) unless is_mine?(@comment) || is_admin?
 
     @comment.destroy
-    json_response({ message: Message.delete_success('Comment')}, :ok)
+    json_response({ message: Message.delete_success("Comment")})
   end
 
   private
